@@ -254,12 +254,12 @@ void LoadBalancer::finalize() {
                 << " activeServersAtEnd=" << stats.activeServersAtEnd
                 << " inactiveServersAtEnd=" << stats.inactiveServersAtEnd
                 << " finalServerCount=" << stats.finalServerCount << '\n';
-        logFile << "# rubric startingQueueSize=" << stats.startingQueueSize << '\n';
-        logFile << "# rubric endingQueueSize=" << stats.finalQueueSize << '\n';
-        logFile << "# rubric taskTimeRange=" << stats.taskTimeMin << ".." << stats.taskTimeMax << '\n';
-        logFile << "# rubric rejectedRequests=" << stats.totalBlocked << '\n';
-        logFile << "# rubric activeServersAtEnd=" << stats.activeServersAtEnd << '\n';
-        logFile << "# rubric inactiveServersAtEnd=" << stats.inactiveServersAtEnd << '\n';
+        logFile << "# startingQueueSize=" << stats.startingQueueSize << '\n';
+        logFile << "# endingQueueSize=" << stats.finalQueueSize << '\n';
+        logFile << "# taskTimeRange=" << stats.taskTimeMin << ".." << stats.taskTimeMax << '\n';
+        logFile << "# rejectedRequests=" << stats.totalBlocked << '\n';
+        logFile << "# activeServersAtEnd=" << stats.activeServersAtEnd << '\n';
+        logFile << "# inactiveServersAtEnd=" << stats.inactiveServersAtEnd << '\n';
     }
 }
 

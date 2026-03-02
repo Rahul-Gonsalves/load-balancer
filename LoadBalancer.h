@@ -41,6 +41,7 @@ struct SimulationConfig {
  * @brief Aggregates metrics collected during simulation.
  */
 struct SimulationStats {
+    int startingQueueSize = 0;
     int totalGenerated = 0;
     int totalBlocked = 0;
     int totalProcessed = 0;
@@ -51,6 +52,10 @@ struct SimulationStats {
     int maxQueueSize = 0;
     int finalQueueSize = 0;
     int finalServerCount = 0;
+    int activeServersAtEnd = 0;
+    int inactiveServersAtEnd = 0;
+    int taskTimeMin = 1;
+    int taskTimeMax = 1;
 };
 
 /**

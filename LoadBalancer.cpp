@@ -35,6 +35,8 @@ LoadBalancer::LoadBalancer(const SimulationConfig& cfg, const std::vector<std::s
     for (int i = 0; i < config.initialServers; ++i) {
         servers.emplace_back(nextServerID++);
     }
+    stats.taskTimeMin = 1;
+    stats.taskTimeMax = config.maxProcessTime;
 
     logFile.open(config.logFilePath);
     if (logFile.is_open()) {
@@ -96,6 +98,7 @@ void LoadBalancer::initializeQueue(int size) {
         ++stats.totalGenerated;
         tryAcceptRequest(req, false);
     }
+    stats.startingQueueSize = static_cast<int>(requestQueue.size());
 }
 
 bool LoadBalancer::enqueueRequest(const Request& request, bool countAsGenerated, bool printBlocked) {
@@ -234,13 +237,29 @@ void LoadBalancer::simulate() {
 void LoadBalancer::finalize() {
     stats.finalQueueSize = static_cast<int>(requestQueue.size());
     stats.finalServerCount = static_cast<int>(servers.size());
+    stats.inactiveServersAtEnd = 0;
+    for (const WebServer& server : servers) {
+        if (server.isIdle()) {
+            ++stats.inactiveServersAtEnd;
+        }
+    }
+    stats.activeServersAtEnd = stats.finalServerCount - stats.inactiveServersAtEnd;
 
     if (logFile.is_open()) {
         logFile << "# summary totalGenerated=" << stats.totalGenerated << " totalBlocked=" << stats.totalBlocked
                 << " totalProcessed=" << stats.totalProcessed << " serversAdded=" << stats.serversAdded
                 << " serversRemoved=" << stats.serversRemoved << " maxQueueSize=" << stats.maxQueueSize
-                << " finalQueueSize=" << stats.finalQueueSize << " finalServerCount=" << stats.finalServerCount
-                << '\n';
+                << " startingQueueSize=" << stats.startingQueueSize << " finalQueueSize=" << stats.finalQueueSize
+                << " taskTimeRange=" << stats.taskTimeMin << ".." << stats.taskTimeMax
+                << " activeServersAtEnd=" << stats.activeServersAtEnd
+                << " inactiveServersAtEnd=" << stats.inactiveServersAtEnd
+                << " finalServerCount=" << stats.finalServerCount << '\n';
+        logFile << "# rubric startingQueueSize=" << stats.startingQueueSize << '\n';
+        logFile << "# rubric endingQueueSize=" << stats.finalQueueSize << '\n';
+        logFile << "# rubric taskTimeRange=" << stats.taskTimeMin << ".." << stats.taskTimeMax << '\n';
+        logFile << "# rubric rejectedRequests=" << stats.totalBlocked << '\n';
+        logFile << "# rubric activeServersAtEnd=" << stats.activeServersAtEnd << '\n';
+        logFile << "# rubric inactiveServersAtEnd=" << stats.inactiveServersAtEnd << '\n';
     }
 }
 
@@ -253,6 +272,8 @@ void LoadBalancer::printSummary() const {
     const char* reset = config.colorOutput ? RESET : "";
 
     std::cout << color << "\nSimulation Summary\n" << reset;
+    std::cout << "Starting queue size:      " << stats.startingQueueSize << '\n';
+    std::cout << "Task time range:          " << stats.taskTimeMin << ".." << stats.taskTimeMax << '\n';
     std::cout << "Total generated requests: " << stats.totalGenerated << '\n';
     std::cout << "Total blocked requests:   " << stats.totalBlocked << '\n';
     std::cout << "Total processed requests: " << stats.totalProcessed << '\n';
@@ -261,5 +282,7 @@ void LoadBalancer::printSummary() const {
     std::cout << "Max queue size:           " << stats.maxQueueSize << '\n';
     std::cout << "Final queue size:         " << stats.finalQueueSize << '\n';
     std::cout << "Final server count:       " << stats.finalServerCount << '\n';
+    std::cout << "Active servers at end:    " << stats.activeServersAtEnd << '\n';
+    std::cout << "Inactive servers at end:  " << stats.inactiveServersAtEnd << '\n';
     std::cout << "Log file:                 " << config.logFilePath << '\n';
 }

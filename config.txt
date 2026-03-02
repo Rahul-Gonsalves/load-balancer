@@ -1,0 +1,30 @@
+# Project 3 load balancer configuration
+# ---------------- Base simulation ----------------
+initialServers=10
+runTime=10000
+initialQueueMultiplier=100
+
+# Queue thresholds are factors multiplied by current server count
+minThresholdFactor=50
+maxThresholdFactor=80
+scalingCooldownCycles=5
+
+# Request generation
+requestProbability=40
+maxNewRequestsPerCycle=3
+maxProcessTime=20
+
+# Output for single mode
+logFilePath=log.txt
+colorOutput=true
+
+# Firewall blocking (comma-separated prefixes)
+blockedPrefixes=10.,192.168.,172.16.
+
+# ---------------- Bonus switch mode ----------------
+# false = single load balancer, true = route P/S jobs to separate load balancers
+useSwitch=false
+processingServers=5
+streamingServers=5
+processingLogFilePath=processing_log.txt
+streamingLogFilePath=streaming_log.txt

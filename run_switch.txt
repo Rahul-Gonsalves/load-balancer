@@ -1,0 +1,92 @@
+Starting switch-mode simulation for 10000 cycles (processingServers=5, streamingServers=5).
+[31m[cycle 0] blocked request from 10.152.174.46[0m
+[31m[cycle 0] blocked request from 10.68.223.183[0m
+[31m[cycle 0] blocked request from 10.144.141.208[0m
+[33m[cycle 1] added server; total=6[0m
+[33m[cycle 1] added server; total=6[0m
+[33m[cycle 7] added server; total=7[0m
+[33m[cycle 7] added server; total=7[0m
+[31m[cycle 99] blocked request from 10.175.155.238[0m
+[31m[cycle 415] blocked request from 10.88.151.185[0m
+[36m[cycle 584] removed idle server; total=6[0m
+[36m[cycle 616] removed idle server; total=6[0m
+[36m[cycle 794] removed idle server; total=5[0m
+[36m[cycle 817] removed idle server; total=5[0m
+[31m[cycle 952] blocked request from 10.196.217.51[0m
+[36m[cycle 1180] removed idle server; total=4[0m
+[31m[cycle 1598] blocked request from 10.95.159.166[0m
+[36m[cycle 1624] removed idle server; total=4[0m
+[31m[cycle 1635] blocked request from 10.210.196.235[0m
+[31m[cycle 1849] blocked request from 10.205.82.161[0m
+[31m[cycle 2104] blocked request from 10.254.127.81[0m
+[36m[cycle 2145] removed idle server; total=3[0m
+[31m[cycle 2194] blocked request from 10.84.4.199[0m
+[33m[cycle 2408] added server; total=4[0m
+[33m[cycle 3248] added server; total=5[0m
+[31m[cycle 3699] blocked request from 10.191.109.171[0m
+[31m[cycle 4002] blocked request from 10.56.181.193[0m
+[36m[cycle 4017] removed idle server; total=4[0m
+[31m[cycle 4223] blocked request from 10.143.74.115[0m
+[31m[cycle 4303] blocked request from 10.197.37.83[0m
+[31m[cycle 4441] blocked request from 10.185.252.118[0m
+[31m[cycle 4902] blocked request from 10.136.63.96[0m
+[31m[cycle 5325] blocked request from 10.149.240.153[0m
+[31m[cycle 5494] blocked request from 10.247.115.191[0m
+[31m[cycle 5941] blocked request from 10.254.116.88[0m
+[33m[cycle 6206] added server; total=5[0m
+[31m[cycle 6303] blocked request from 10.232.135.162[0m
+[31m[cycle 6921] blocked request from 10.24.91.133[0m
+[31m[cycle 6959] blocked request from 10.180.236.187[0m
+[31m[cycle 7011] blocked request from 10.34.12.63[0m
+[36m[cycle 7104] removed idle server; total=4[0m
+[31m[cycle 7220] blocked request from 10.126.49.148[0m
+[31m[cycle 7487] blocked request from 10.124.9.156[0m
+[31m[cycle 7637] blocked request from 10.114.192.207[0m
+[31m[cycle 7789] blocked request from 10.28.246.92[0m
+[33m[cycle 8292] added server; total=5[0m
+[31m[cycle 8615] blocked request from 10.97.210.201[0m
+[31m[cycle 8753] blocked request from 10.144.157.8[0m
+[31m[cycle 8920] blocked request from 10.221.139.249[0m
+[36m[cycle 8963] removed idle server; total=4[0m
+[31m[cycle 9027] blocked request from 10.26.127.25[0m
+[31m[cycle 9210] blocked request from 10.233.71.230[0m
+[31m[cycle 9251] blocked request from 10.86.111.240[0m
+[33m[cycle 9331] added server; total=5[0m
+[31m[cycle 9339] blocked request from 10.196.184.196[0m
+[31m[cycle 9679] blocked request from 10.103.174.134[0m
+[31m[cycle 9685] blocked request from 10.21.174.90[0m
+[35m
+Switch Mode Summary
+[0m
+[Processing Load Balancer]
+[32m
+Simulation Summary
+[0mTotal generated requests: 4595
+Total blocked requests:   17
+Total processed requests: 4303
+Servers added:            5
+Servers removed:          6
+Max queue size:           501
+Final queue size:         272
+Final server count:       4
+Log file:                 processing_log.txt
+
+[Streaming Load Balancer]
+[32m
+Simulation Summary
+[0mTotal generated requests: 4413
+Total blocked requests:   20
+Total processed requests: 4132
+Servers added:            4
+Servers removed:          4
+Max queue size:           500
+Final queue size:         256
+Final server count:       5
+Log file:                 streaming_log.txt
+
+[Aggregate]
+Total generated: 9008
+Total blocked:   37
+Total processed: 8435
+Servers added:   9
+Servers removed: 10

@@ -1,22 +1,34 @@
-# CSCE412 Project 3: Load Balancer Simulation
+# Adaptive Load Balancer Simulator
 
-## Overview
-This project simulates a load balancer that distributes requests across web servers, scales server count based on queue pressure, and filters blocked IP ranges.
+A configurable C++ simulation of an adaptive load balancer designed to model queue-driven request distribution, dynamic server scaling, and basic firewall behavior.
 
-It supports:
-- Single load balancer mode (core requirement)
-- Bonus switch mode that routes `P` and `S` jobs to separate load balancers
+## System Summary
+The simulator models production-style request handling with these capabilities:
+- Request queue management with per-cycle scheduling
+- Dynamic horizontal scaling of server workers based on queue pressure
+- Cooldown-protected scaling decisions to reduce thrashing
+- Prefix-based source IP blocking (firewall guardrail)
+- Structured logging for cycle metrics and run-end status
+- Optional switch routing mode that separates streaming and processing workloads
 
-## Files
-- `main.cpp`: Driver, config parsing, mode selection
-- `Request.h/.cpp`: Request data structure
-- `WebServer.h/.cpp`: Web server worker logic
-- `LoadBalancer.h/.cpp`: Queueing, scheduling, scaling, firewall, logging
-- `Switch.h/.cpp`: Bonus routing layer for job-type-based dispatch
-- `config.txt`: Runtime configuration
-- `Makefile`: Build and clean commands
-- `Doxyfile`: Doxygen configuration
-- `docs/html/`: Generated Doxygen HTML output
+## Architecture
+Core components:
+- `Request`: immutable request payload (source IP, destination IP, processing time, job type)
+- `WebServer`: single-worker execution unit, processes one request at a time
+- `LoadBalancer`: queue owner and orchestrator (assignment, scaling, filtering, metrics)
+- `Switch` (optional): routes `P` (processing) and `S` (streaming) jobs to dedicated load balancers
+
+## Runtime Model
+Each clock cycle:
+1. New requests may arrive based on configured probability.
+2. Blocked source IP prefixes are filtered before queue admission.
+3. Idle servers pull from the request queue.
+4. Active servers process one cycle of work.
+5. Scaling logic evaluates queue pressure:
+   - scale up if `queueSize > maxThresholdFactor * serverCount`
+   - scale down if `queueSize < minThresholdFactor * serverCount`
+6. Cooldown enforces wait cycles between scaling actions.
+7. Per-cycle metrics are appended to log output.
 
 ## Build
 ```bash
@@ -24,75 +36,62 @@ make
 ```
 
 ## Run
-Single load balancer mode:
+Default:
 ```bash
 ./loadbalancer config.txt
 ```
 
-Switch mode (bonus):
+Switch mode:
 1. Set `useSwitch=true` in `config.txt`
-2. Run:
-```bash
-./loadbalancer config.txt
-```
+2. Run `./loadbalancer config.txt`
 
-## Key Config Options (`config.txt`)
-- `initialServers`: Initial server count (single mode)
-- `runTime`: Number of cycles to simulate
-- `initialQueueMultiplier`: Initial queue = servers * multiplier
-- `minThresholdFactor`: Lower scaling threshold factor
-- `maxThresholdFactor`: Upper scaling threshold factor
-- `scalingCooldownCycles`: Wait cycles between scale actions
-- `requestProbability`: Percent chance of new arrivals each cycle
-- `maxNewRequestsPerCycle`: Max new arrivals per cycle
-- `maxProcessTime`: Max processing time per request
-- `blockedPrefixes`: Comma-separated blocked IP prefixes
-- `useSwitch`: Enable/disable bonus switch mode
-- `processingServers`: Processing LB server count in switch mode
-- `streamingServers`: Streaming LB server count in switch mode
-- `logFilePath`, `processingLogFilePath`, `streamingLogFilePath`: Log file destinations
+## Configuration Reference
+`config.txt` controls runtime behavior without code changes.
 
-## Output and Logs
-- Console output includes colorized events:
-  - Red: blocked request
-  - Yellow: server added
-  - Cyan: server removed
-  - Green: summary
-- CSV log files include per-cycle metrics plus a final summary line.
+Main controls:
+- `initialServers`: starting server count (single mode)
+- `runTime`: number of simulation cycles
+- `initialQueueMultiplier`: initial queue = `initialServers * initialQueueMultiplier`
+- `minThresholdFactor`, `maxThresholdFactor`: scaling bounds
+- `scalingCooldownCycles`: minimum delay between scale actions
+- `requestProbability`: chance of new arrivals each cycle (0-100)
+- `maxNewRequestsPerCycle`: upper bound for new arrivals in a cycle
+- `maxProcessTime`: max request processing time (cycles)
+- `blockedPrefixes`: comma-separated IP prefixes to reject
+- `colorOutput`: ANSI colorized runtime events
 
-## Required 10 Server / 10000 Cycle Run
-Default `config.txt` is already set for:
-- `initialServers=10`
-- `runTime=10000`
+Switch controls:
+- `useSwitch`: enable workload routing mode
+- `processingServers`, `streamingServers`: initial server pools
+- `processingLogFilePath`, `streamingLogFilePath`: per-balancer logs
 
-Run:
-```bash
-./loadbalancer config.txt
-```
-This produces `log.txt` for submission.
+## Log Contract
+Cycle log columns:
+- `cycle,queueSize,serverCount,totalGenerated,totalBlocked,totalProcessed`
 
-## Doxygen Documentation
-Generate docs:
+Run-end summary includes:
+- start/end queue size
+- task time range
+- total generated/blocked/processed
+- servers added/removed
+- active/inactive servers at end
+- final server count
+
+## Documentation
+Generate API/reference docs:
 ```bash
 doxygen Doxyfile
 ```
-Main page after generation:
+Entry page:
 - `docs/html/index.html`
 
-## Packaging for Submission
-Clean old objects/binary:
-```bash
-make clean
-```
-
-Create zip with source and build files (no executables):
-```bash
-zip -r project3_submission.zip *.h *.cpp Makefile config.txt Doxyfile README.md docs
-```
-
-## Suggested Demo Flow (Video)
-1. Show `config.txt` and explain parameters.
-2. Run single mode and show scaling + firewall events.
-3. Show `log.txt` summary.
-4. Enable `useSwitch=true`, rerun, and show separate processing/streaming summaries.
-5. Open `docs/html/index.html` to show generated documentation.
+## Repository Layout
+- `main.cpp`
+- `Request.h`, `Request.cpp`
+- `WebServer.h`, `WebServer.cpp`
+- `LoadBalancer.h`, `LoadBalancer.cpp`
+- `Switch.h`, `Switch.cpp`
+- `config.txt`
+- `Makefile`
+- `Doxyfile`
+- `docs/html/`

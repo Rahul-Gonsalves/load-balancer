@@ -23,7 +23,7 @@ blockedPrefixes=10.,192.168.,172.16.
 
 # ---------------- Bonus switch mode ----------------
 # false = single load balancer, true = route P/S jobs to separate load balancers
-useSwitch=false
+useSwitch=true
 processingServers=5
 streamingServers=5
 processingLogFilePath=processing_log.txt
